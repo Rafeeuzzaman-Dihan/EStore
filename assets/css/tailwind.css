@@ -1,0 +1,23 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+body {
+  @apply bg-gray-50;
+}
+
+@layer components {
+  .btn {
+    @apply bg-[#12b488] text-white px-3 py-2 rounded-md text-sm inline-block;
+    @apply transition duration-300 ease-in-out; 
+  }
+
+  .btn:hover {
+    @apply bg-[#0e9a6c]; 
+  }
+
+  .card {
+    @apply p-3 rounded-md bg-white shadow-md h-full transition-transform duration-200 ease-in-out;
+  }
+
+}
