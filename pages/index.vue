@@ -2,7 +2,7 @@
   <div class="container mx-auto p-6">
     <div class="flex flex-col md:flex-row items-center bg-blue-50 p-10">
       <div class="text-section md:w-1/2">
-        <h1 class="text-6xl font-bold mb-4 text-green-600">Nuxt Store</h1>
+        <h1 class="text-6xl font-bold mb-4 text-green-600">Nuxt Mart</h1>
         <h3 class="text-3xl mb-7 leading-tight">
           Shop Smarter<br />
           Not Harder!
