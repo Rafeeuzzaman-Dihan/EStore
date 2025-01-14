@@ -5,7 +5,7 @@
         <h1 class="text-6xl font-bold mb-4 text-green-600">Nuxt Mart</h1>
         <h3 class="text-3xl mb-7 leading-tight">
           Shop Smarter<br />
-          Not Harder!
+          Not Harder
         </h3>
         <p class="text-xl mb-4">Explore a world of unique products, handpicked just for you.</p>
       </div>
