@@ -6,12 +6,12 @@
         <div
           v-for="(item, index) in cartItems"
           :key="index"
-          class="flex items-center p-4 border rounded-lg shadow-lg bg-white hover:shadow-xl transition-shadow duration-300"
+          class="flex items-center p-4 border rounded-lg shadow-lg bg-white hover:shadow-xl transition-shadow duration-300 relative"
         >
           <img :src="item.image" alt="Product Image" class="w-32 h-32 mr-6 rounded-md" />
           <div class="flex-1">
-            <h2 class="text-xl font-semibold">{{ item.title }}</h2>
-            <p class="text-lg font-bold text-gray-800">Price: ${{ (item.price * item.quantity).toFixed(2) }}</p>
+            <h2 class="text-xl font-bold">{{ item.title }}</h2>
+            <p class="text-lg font-semibold text-gray-800">Price: ${{ (item.price * item.quantity).toFixed(2) }}</p>
             <div class="flex items-center mt-4">
               <button @click="decreaseQuantity(index)" class="bg-gray-200 hover:bg-gray-300 text-gray-800 font-semibold py-1 px-2 rounded-l">
                 -
@@ -24,9 +24,9 @@
           </div>
           <button
             @click="removeFromCart(index)"
-            class="ml-4 bg-red-500 hover:bg-red-600 text-white font-bold py-2 px-4 rounded transition-colors duration-200"
+            class="absolute top-2 right-2 text-red-500 hover:text-red-700"
           >
-            Remove
+            <span class="material-icons">close</span>
           </button>
         </div>
       </div>
@@ -44,12 +44,15 @@
           <span>Tax:</span>
           <span>${{ tax.toFixed(2) }}</span>
         </div>
+        <div class="flex justify-between mb-2">
+          <span>Discount:</span>
+          <span>${{ discount.toFixed(2) }}</span>
+        </div>
         <div class="flex justify-between mb-4 font-bold">
           <span>Total:</span>
           <span>${{ total.toFixed(2) }}</span>
         </div>
         
-        <!-- Promo Code Section -->
         <div class="flex items-center mt-4">
           <input 
             type="text" 
@@ -67,9 +70,11 @@
 
 <script setup>
 import { ref, onMounted, computed } from 'vue';
+import { showPromoAlert } from '@/composables/toast';
 
 const cartItems = ref([]);
-const promoCode = ref(''); // Promo code state
+const promoCode = ref('');
+const discount = ref(0);
 
 // Load cart items from local storage
 const loadCartItems = () => {
@@ -117,17 +122,22 @@ const tax = computed(() => {
 });
 
 const total = computed(() => {
-  return originalPrice.value + tax.value;
+  return originalPrice.value + tax.value - discount.value;
 });
 
-// Dummy function for applying promo code
+// Apply promo code
 const applyPromo = () => {
-  if (promoCode.value) {
-    alert(`Promo code "${promoCode.value}" applied! (This is a dummy function)`);
-    promoCode.value = ''; // Clear the input after applying
+  const promo = promoCode.value.toLowerCase();
+  if (promo === 'bdfb') {
+    discount.value = originalPrice.value * 0.20; // 20% discount
+    showPromoAlert('Congratulations!', 'You have received a 20% discount!', 'success');
+  } else if (promo === 'nuxt') {
+    discount.value = originalPrice.value * 0.10; // 10% discount
+    showPromoAlert('Congratulations!', 'You have received a 10% discount', 'success');
   } else {
-    alert('Please enter a promo code.');
+    showPromoAlert('Nice Try!', 'Invalid promo code', 'error');
   }
+  promoCode.value = ''; // Clear input after applying
 };
 
 onMounted(loadCartItems);
@@ -135,10 +145,11 @@ onMounted(loadCartItems);
 
 <style scoped>
 img {
-  max-width: 100px;
+  max-width: 100px; /* Ensure images are not too large */
 }
 
 button {
   cursor: pointer;
 }
+
 </style>

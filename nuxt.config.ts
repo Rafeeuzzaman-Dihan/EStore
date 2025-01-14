@@ -1,5 +1,4 @@
 // https://v3.nuxtjs.org/api/configuration/nuxt.config
-import swal from 'sweetalert2';
 export default defineNuxtConfig({
   modules: [
     '@nuxtjs/tailwindcss'

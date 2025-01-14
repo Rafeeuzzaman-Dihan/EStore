@@ -1,14 +1,21 @@
 <template>
-  <div class="card text-center flex flex-col items-center">
+  <div class="card text-center flex flex-col items-center relative">
     <NuxtLink :to="`/products/${product.id}`">
       <img :src="product.image" class="thumb" alt="Product Image" />
     </NuxtLink>
+      <span 
+        class="material-icons heart-icon" 
+        @click="toggleFav"
+        :class="{ 'filled': isFav }"
+      >
+        favorite
+      </span>
     <NuxtLink :to="`/products/${product.id}`">
       <p class="font-bold text-gray-800 mt-2">{{ product.title }}</p>
     </NuxtLink>
     <div class="rating">
       <span class="text-gray-800 font-semibold">
-        Rating: {{ product.rating.rate }}
+        <span v-for="star in 5" :key="star" class="star" :class="{ filled: star <= product.rating.rate }">★</span>
       </span>
       <span class="text-gray-500"> ({{ product.rating.count }} reviews)</span>
     </div>
@@ -16,16 +23,24 @@
     <p class="price">${{ product.price }}</p>
     <div class="flex gap-3">
       <button class="btn mt-4" @click="addToCart">Add to Cart</button>
-      <button class="btn mt-4" @click="addToFav">Add to Favourite</button>
     </div>
   </div>
 </template>
 
 <script setup>
-import Swal from 'sweetalert2';
+import { ref, onMounted } from 'vue';
+import { showToast } from '@/composables/toast';
 import { useCart } from '@/composables/state'; 
+
 const { product } = defineProps(['product']);
 const cart = useCart();
+const isFav = ref(false); // Reactive variable to track favorite status
+
+// Check if the product is in favorites on mount
+onMounted(() => {
+  const fav = JSON.parse(localStorage.getItem('fav')) || [];
+  isFav.value = fav.some(item => item.id === product.id); // Set isFav based on local storage
+});
 
 const addToCart = () => {
   if (typeof window !== 'undefined') {
@@ -38,25 +53,13 @@ const addToCart = () => {
       quantity: 1,
     };
 
-    // Retrieve existing cart items from state
     const currentCart = cart.value;
 
     // Checking if the product is already in the cart
     const productExists = currentCart.some(item => item.id === cartItem.id);
 
     if (productExists) {
-      const Toast = Swal.mixin({
-        toast: true,
-        position: 'top-end',
-        showConfirmButton: false,
-        timer: 1000,
-        timerProgressBar: true,
-      });
-
-      Toast.fire({
-        icon: 'warning',
-        title: 'Product already in cart',
-      });
+      showToast('warning', `${product.title} already in the cart`);
       return;
     }
 
@@ -70,22 +73,11 @@ const addToCart = () => {
     localStorage.setItem('cart', JSON.stringify(currentCart));
 
     // Notify the user
-    const Toast = Swal.mixin({
-      toast: true,
-      position: 'top-end',
-      showConfirmButton: false,
-      timer: 1000,
-      timerProgressBar: true,
-    });
-
-    Toast.fire({
-      icon: 'success',
-      title: 'Product added to cart',
-    });
+    showToast('success', `${product.title} added in the cart`);
   }
 };
 
-const addToFav = () => {
+const toggleFav = () => {
   if (typeof window !== 'undefined') {
     const favItem = {
       image: product.image,
@@ -102,17 +94,18 @@ const addToFav = () => {
     const productExists = fav.some(item => item.id === favItem.id);
 
     if (productExists) {
-      alert('The product is already in the favourites.');
-      return; // Exit the function if the product is already in the favourites
+      // Remove from favorites
+      const updatedFav = fav.filter(item => item.id !== favItem.id);
+      localStorage.setItem('fav', JSON.stringify(updatedFav));
+      showToast('info', `${product.title} removed from favourites`);
+      isFav.value = false; // Update favorite status
+    } else {
+      // Add to favorites
+      fav.push(favItem);
+      localStorage.setItem('fav', JSON.stringify(fav));
+      showToast('success', `${product.title} added to favourites`);
+      isFav.value = true; // Update favorite status
     }
-
-    // Add the new item to the favourites
-    fav.push(favItem);
-
-    // Save the updated favourites back to local storage
-    localStorage.setItem('fav', JSON.stringify(fav));
-
-    alert('Product added to favourites!');
   }
 };
 </script>
@@ -122,6 +115,12 @@ const addToFav = () => {
   max-height: 200px;
   max-width: 100%;
   margin: 0 auto;
+  border-radius: 10px; /* Rounded image corners */
+  transition: transform 0.3s; /* Transition effect */
+}
+
+.card:hover .thumb {
+  transform: scale(1.05); /* Scale effect on hover */
 }
 
 .card:hover {
@@ -133,9 +132,32 @@ const addToFav = () => {
   font-size: 1rem;
 }
 
+.star {
+  font-size: 1.5rem; /* Adjust size as needed */
+  color: gray; /* Default star color */
+}
+
+.star.filled {
+  color: gold; /* Color for filled stars */
+}
+
 .price {
   font-size: 1.5rem;
   color: #333;
   font-weight: bold;
+}
+
+.heart-icon {
+  position: absolute;
+  top: 10px; /* Adjust position as needed */
+  right: 10px; /* Adjust position as needed */
+  font-size: 24px; /* Adjust size as needed */
+  color: gray; /* Default heart color */
+  cursor: pointer; /* Pointer cursor on hover */
+  transition: color 0.3s; /* Transition effect */
+}
+
+.heart-icon.filled {
+  color: red; /* Color when filled */
 }
 </style>
