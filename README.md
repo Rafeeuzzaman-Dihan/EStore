@@ -17,9 +17,6 @@ To get started, clone the repository and install the dependencies:
 git clone https://github.com/Rafeeuzzaman-Dihan/Nuxt-Mart.git
 cd Nuxt-Mart
 
-
-## **Install Dependencies**
-
 # npm
 npm install
 
@@ -31,9 +28,13 @@ yarn install
 
 # bun
 bun install
+```
 
-Development Server
+## Development Server
 
+Start the development server on `http://localhost:3000`:
+
+```bash
 # npm
 npm run dev
 
