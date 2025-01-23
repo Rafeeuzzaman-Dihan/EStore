@@ -18,7 +18,7 @@ git clone https://github.com/Rafeeuzzaman-Dihan/Nuxt-Mart.git
 cd Nuxt-Mart
 
 
-Install Dependencies
+## Install Dependencies
 
 # npm
 npm install
