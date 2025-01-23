@@ -63,7 +63,29 @@
           <button @click="applyPromo" class="bg-blue-500 text-white font-bold py-2 px-4 rounded">Apply</button>
         </div>
       </div>
-      <button class="bg-blue-500 text-white font-bold py-2 px-4 rounded w-full">Checkout</button>
+      <button @click="showPaymentOptions = true" class="bg-blue-500 text-white font-bold py-2 px-4 rounded w-full">Checkout</button>
+
+      <div v-if="showPaymentOptions" class="mt-6">
+        <h2 class="text-xl font-bold mb-4">Payment Options</h2>
+        <div class="bg-white p-4 rounded shadow mb-4">
+          <h3 class="text-lg font-semibold">Choose a payment method:</h3>
+          <div>
+            <label class="block mb-2">
+              <input type="radio" value="credit" v-model="paymentMethod" class="mr-2" />
+              Credit Card
+            </label>
+            <label class="block mb-2">
+              <input type="radio" value="paypal" v-model="paymentMethod" class="mr-2" />
+              PayPal
+            </label>
+            <label class="block mb-2">
+              <input type="radio" value="bank" v-model="paymentMethod" class="mr-2" />
+              Bank Transfer
+            </label>
+          </div>
+          <button @click="processPayment" class="btn">Confirm Payment</button>
+        </div>
+      </div>
     </div>
   </div>
 </template>
@@ -75,6 +97,8 @@ import { showPromoAlert } from '@/composables/toast';
 const cartItems = ref([]);
 const promoCode = ref('');
 const discount = ref(0);
+const showPaymentOptions = ref(false);
+const paymentMethod = ref('');
 
 // Load cart items from local storage
 const loadCartItems = () => {
@@ -140,16 +164,20 @@ const applyPromo = () => {
   promoCode.value = ''; // Clear input after applying
 };
 
+// Process payment
+const processPayment = () => {
+  alert(`Payment method: ${paymentMethod.value}`);
+};
+
 onMounted(loadCartItems);
 </script>
 
 <style scoped>
 img {
-  max-width: 100px; /* Ensure images are not too large */
+  max-width: 100px; 
 }
 
 button {
   cursor: pointer;
 }
-
 </style>

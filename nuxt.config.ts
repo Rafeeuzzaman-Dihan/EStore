@@ -7,7 +7,7 @@ export default defineNuxtConfig({
 
   app: {
     head: {
-      title: 'EStore',
+      title: 'Nuxt Mart',
       meta: [
         {name: 'description', content: 'Online Store'}
       ],
