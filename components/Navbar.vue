@@ -1,11 +1,11 @@
 <template>
   <div>
-    <header class="shadow-lg bg-white">
+    <header class="shadow-lg bg-white dark:bg-gray-800">
       <nav class="container mx-auto flex justify-between items-center p-4">
         <NuxtLink class="logo" to="/">
           <img src="/assets/logo.png" alt="Logo" class="logo-image" />
         </NuxtLink>
-        <div class="flex space-x-4">
+        <div class="flex items-center space-x-4">
           <div v-for="item in navItems" :key="item.name">
             <NuxtLink :to="item.link" class="nav-link flex items-center">
               <span class="material-icons">{{ item.icon }}</span>
@@ -13,6 +13,9 @@
               <span v-if="item.value" class="cart-value">{{ item.value }}</span>
             </NuxtLink>
           </div>
+          <button @click="toggleDarkMode" class="flex items-center p-2 rounded-md bg-gray-200 dark:bg-gray-700 transition duration-300">
+            <span class="material-icons">{{ isDarkMode ? 'light_mode' : 'dark_mode' }}</span>
+          </button>
         </div>
       </nav>
     </header>
@@ -20,10 +23,21 @@
 </template>
 
 <script setup>
-import { computed } from 'vue';
+import { computed, ref } from 'vue';
 import { useCart } from '@/composables/state.js'; 
 
 const cart = useCart();
+const isDarkMode = ref(false);
+
+// Toggle dark mode
+const toggleDarkMode = () => {
+  isDarkMode.value = !isDarkMode.value;
+  if (isDarkMode.value) {
+    document.body.classList.add('dark');
+  } else {
+    document.body.classList.remove('dark');
+  }
+};
 
 const navItems = computed(() => [
   { link: "/", icon: 'home' }, 
